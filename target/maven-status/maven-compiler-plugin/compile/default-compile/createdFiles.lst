@@ -1,0 +1,7 @@
+com\mycompany\academichomepage\DBConnection.class
+com\mycompany\academichomepage\JakartaRestConfiguration.class
+com\mycompany\academichomepage\LogoutServlet.class
+com\mycompany\academichomepage\LoginServlet.class
+com\mycompany\academichomepage\resources\JakartaEE11Resource.class
+com\mycompany\academichomepage\RegisterServlet.class
+com\mycompany\academichomepage\MessageServlet.class
