@@ -1,59 +1,55 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package com.mycompany.academichomepage;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
-/**
- *
- * @author viane
- */
-@WebServlet("/MessageServlet")
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+@WebServlet("/contact")
 public class MessageServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String name    = request.getParameter("name");
-        String email   = request.getParameter("email");
+        String name = request.getParameter("name");
+        String email = request.getParameter("email");
         String message = request.getParameter("message");
 
-        response.setContentType("text/html;charset=UTF-8");
+        // If logged in, we can link the message to the user
+        HttpSession session = request.getSession(false);
+        Integer userId = (session != null) ? (Integer) session.getAttribute("userId") : null;
 
-        try (PrintWriter out = response.getWriter()) {
-            try (Connection conn = DBConnection.getConnection()) {
+        String sql =
+                "INSERT INTO messages (user_id, name, email, message_text) " +
+                "VALUES (?, ?, ?, ?)";
 
-                // EXTRA CREDIT: PreparedStatement
-                String sql = "INSERT INTO messages (name, email, message) VALUES (?, ?, ?)";
-                try (PreparedStatement ps = conn.prepareStatement(sql)) {
-                    ps.setString(1, name);
-                    ps.setString(2, email);
-                    ps.setString(3, message);
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-                    int rows = ps.executeUpdate();
-
-                    if (rows > 0) {
-                        out.println("<h2>Thank you for your message!</h2>");
-                        out.println("<a href='index.html'>Back to Home</a>");
-                    } else {
-                        out.println("<h2>Something went wrong. Please try again.</h2>");
-                        out.println("<a href='contact.jsp'>Back to Contact</a>");
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace(out);
+            if (userId != null) {
+                stmt.setInt(1, userId);
+            } else {
+                stmt.setNull(1, java.sql.Types.INTEGER);
             }
+            stmt.setString(2, name);
+            stmt.setString(3, email);
+            stmt.setString(4, message);
+
+            stmt.executeUpdate();
+
+            response.sendRedirect("contact.jsp?success=1");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            response.sendRedirect("contact.jsp?error=1");
         }
     }
 }
