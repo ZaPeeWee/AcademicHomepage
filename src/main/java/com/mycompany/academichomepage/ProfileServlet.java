@@ -8,17 +8,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
-
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
-@WebServlet("/profile")
+@WebServlet(name = "ProfileServlet", urlPatterns = {"/profile"})
 @MultipartConfig
 public class ProfileServlet extends HttpServlet {
 
@@ -27,32 +23,10 @@ public class ProfileServlet extends HttpServlet {
             throws ServletException, IOException {
 
         HttpSession session = request.getSession(false);
+
         if (session == null || session.getAttribute("userId") == null) {
-            response.sendRedirect("login.jsp?error=1");
+            response.sendRedirect("login.jsp");
             return;
-        }
-
-        int userId = (int) session.getAttribute("userId");
-
-        String sql = "SELECT full_name, email, major, bio, avatar_path FROM users WHERE id = ?";
-
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setInt(1, userId);
-
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    request.setAttribute("fullName", rs.getString("full_name"));
-                    request.setAttribute("email", rs.getString("email"));
-                    request.setAttribute("major", rs.getString("major"));
-                    request.setAttribute("bio", rs.getString("bio"));
-                    request.setAttribute("avatarPath", rs.getString("avatar_path"));
-                }
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
 
         request.getRequestDispatcher("profile.jsp").forward(request, response);
@@ -64,83 +38,77 @@ public class ProfileServlet extends HttpServlet {
 
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("userId") == null) {
-            response.sendRedirect("login.jsp?error=1");
+            response.sendRedirect("login.jsp");
             return;
         }
 
-        int userId = (int) session.getAttribute("userId");
+        int userId = (Integer) session.getAttribute("userId");
 
-        request.setCharacterEncoding("UTF-8");
         String fullName = request.getParameter("fullName");
-        String major = request.getParameter("major");
-        String bio = request.getParameter("bio");
+        String major    = request.getParameter("major");
+        String bio      = request.getParameter("bio");
 
-        // Handle avatar upload
+        if (fullName == null) fullName = "";
+        if (major == null)    major = "";
+        if (bio == null)      bio = "";
+
+        // ===== NEW: File uploads =====
         Part avatarPart = request.getPart("avatar");
-        String avatarPathInApp = null;
+        Part resumePart = request.getPart("resume");
 
+        String avatarFile = null;
+        String resumeFile = null;
+
+        // Save avatar
         if (avatarPart != null && avatarPart.getSize() > 0) {
-            // Where to save on disk
-            String uploadsDir = getServletContext().getRealPath("/uploads/avatars");
-            File uploadsFolder = new File(uploadsDir);
-            if (!uploadsFolder.exists()) {
-                uploadsFolder.mkdirs();
-            }
-
-            // File name: user_<id>.originalExtension
-            String submittedName = avatarPart.getSubmittedFileName();
-            String extension = "";
-            int dot = submittedName.lastIndexOf('.');
-            if (dot != -1) {
-                extension = submittedName.substring(dot);
-            }
-
-            String fileName = "user_" + userId + extension;
-            File fileOnDisk = new File(uploadsFolder, fileName);
-
-            Files.copy(avatarPart.getInputStream(), fileOnDisk.toPath(),
-                    StandardCopyOption.REPLACE_EXISTING);
-
-            // Path for <img src="...">
-            avatarPathInApp = "uploads/avatars/" + fileName;
+            avatarFile = "avatar_" + userId + ".png";
+            String path = getServletContext().getRealPath("/uploads/avatars/");
+            new File(path).mkdirs();
+            avatarPart.write(path + avatarFile);
         }
 
-        String sql;
-        if (avatarPathInApp != null) {
-            sql = "UPDATE users SET full_name = ?, major = ?, bio = ?, avatar_path = ? WHERE id = ?";
-        } else {
-            sql = "UPDATE users SET full_name = ?, major = ?, bio = ? WHERE id = ?";
+        // Save resume
+        if (resumePart != null && resumePart.getSize() > 0) {
+            resumeFile = "resume_" + userId + ".pdf";
+            String path = getServletContext().getRealPath("/uploads/resumes/");
+            new File(path).mkdirs();
+            resumePart.write(path + resumeFile);
         }
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnection.getConnection()) {
+
+            String sql = "UPDATE users SET full_name=?, major=?, bio=?, "
+                       + "avatar_path = COALESCE(?, avatar_path), "
+                       + "resume_path = COALESCE(?, resume_path) "
+                       + "WHERE id=?";
+
+            PreparedStatement stmt = conn.prepareStatement(sql);
 
             stmt.setString(1, fullName);
             stmt.setString(2, major);
             stmt.setString(3, bio);
-
-            if (avatarPathInApp != null) {
-                stmt.setString(4, avatarPathInApp);
-                stmt.setInt(5, userId);
-            } else {
-                stmt.setInt(4, userId);
-            }
+            stmt.setString(4, avatarFile);
+            stmt.setString(5, resumeFile);
+            stmt.setInt(6, userId);
 
             stmt.executeUpdate();
 
-            // Update session values so dashboard shows new info
+            // Update session
             session.setAttribute("userName", fullName);
             session.setAttribute("userMajor", major);
             session.setAttribute("userBio", bio);
-            if (avatarPathInApp != null) {
-                session.setAttribute("userAvatar", avatarPathInApp);
-            }
 
-            response.sendRedirect("dashboard.jsp?profileUpdated=1");
+            if (avatarFile != null)
+                session.setAttribute("avatarPath", avatarFile);
+
+            if (resumeFile != null)
+                session.setAttribute("resumePath", resumeFile);
+
+            response.sendRedirect("dashboard.jsp?updated=1");
 
         } catch (SQLException e) {
             e.printStackTrace();
-            response.sendRedirect("profile?error=1");
+            response.sendRedirect("profile.jsp?error=1");
         }
     }
 }

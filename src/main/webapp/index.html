@@ -1,14 +1,190 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>Start Page</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    </head>
-    <body>
-        <h1>Hello World!</h1>
-        <a href="register.jsp">Register</a> |
-        <a href="login.jsp">Login</a> |
-        <a href="contact.jsp">Contact</a>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Academic Homepage</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-    </body>
+        body {
+            min-height: 100vh;
+            font-family: "Georgia", "Times New Roman", serif;
+            background: radial-gradient(circle at top, #3b2b26 0, #151013 40%, #0b0809 100%);
+            color: #f5e9d7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .shell {
+            max-width: 900px;
+            width: 100%;
+            background: rgba(16, 11, 10, 0.92);
+            border-radius: 18px;
+            border: 1px solid rgba(198, 169, 115, 0.6);
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.8);
+            display: grid;
+            grid-template-columns: minmax(0, 2fr) minmax(0, 1.4fr);
+            gap: 2.5rem;
+            padding: 2.5rem 3rem;
+        }
+
+        .left h1 {
+            font-size: 2.4rem;
+            letter-spacing: 0.06em;
+            margin-bottom: 0.75rem;
+        }
+
+        .accent {
+            color: #d1a45c;
+        }
+
+        .subtitle {
+            color: #c9b69c;
+            font-size: 0.98rem;
+            margin-bottom: 1.75rem;
+        }
+
+        .tagline {
+            font-size: 0.9rem;
+            color: #e0d2bf;
+            border-left: 2px solid rgba(209,164,92,0.6);
+            padding-left: 0.75rem;
+            margin-bottom: 2rem;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        a.button {
+            text-decoration: none;
+            padding: 0.8rem 1.4rem;
+            border-radius: 999px;
+            font-size: 0.9rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            border: 1px solid rgba(209, 164, 92, 0.7);
+            color: #f5e9d7;
+            transition: all 0.18s ease-out;
+        }
+
+        a.button.primary {
+            background: linear-gradient(135deg, #b8864f, #d1a45c);
+            color: #130d09;
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.75);
+        }
+
+        a.button.primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.9);
+        }
+
+        a.button.secondary {
+            background: transparent;
+        }
+
+        a.button.secondary:hover {
+            background: rgba(209, 164, 92, 0.12);
+        }
+
+        .right {
+            border-left: 1px solid rgba(95, 74, 55, 0.9);
+            padding-left: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .note-title {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+            color: #d1a45c;
+            opacity: 0.85;
+        }
+
+        .note-card {
+            background: rgba(19, 13, 9, 0.9);
+            border-radius: 12px;
+            border: 1px solid rgba(81, 61, 43, 0.9);
+            padding: 1rem 1.1rem;
+            font-size: 0.82rem;
+            color: #d9cbb7;
+            line-height: 1.5;
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.75rem;
+            padding: 0.25rem 0.7rem;
+            border-radius: 999px;
+            border: 1px solid rgba(209, 164, 92, 0.7);
+            margin-right: 0.4rem;
+            margin-top: 0.35rem;
+        }
+
+        .pill-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #d1a45c;
+        }
+
+        @media (max-width: 800px) {
+            .shell {
+                grid-template-columns: 1fr;
+                padding: 2rem 1.5rem;
+            }
+            .right {
+                border-left: none;
+                border-top: 1px solid rgba(95, 74, 55, 0.8);
+                padding-left: 0;
+                padding-top: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="shell">
+    <section class="left">
+        <h1>Our <span class="accent">Academic Homepage</span></h1>
+        <p class="subtitle">
+            A place for projects, classes, and late-night debugging sessions.
+        </p>
+        <p class="tagline">
+            Use the buttons below to create an account, log in, or send a message about the project.
+        </p>
+        <div class="buttons">
+            <a href="register.jsp" class="button primary">Register</a>
+            <a href="login.jsp" class="button secondary">Log in</a>
+            <a href="contact.jsp" class="button secondary">Contact me</a>
+        </div>
+    </section>
+
+    <aside class="right">
+        <div class="note-title">Today’s notes</div>
+        <div class="note-card">
+            <p>• Backend: Java Servlets + JDBC<br>
+               • Database: MySQL (`academic_homepage`)<br>
+               • Goal: basic CRUD for users, projects, and messages.</p>
+            <p style="margin-top:0.75rem;">This is a course project for CSE3021</p>
+            <div>
+                <span class="pill"><span class="pill-dot"></span>dark academia</span>
+                <span class="pill"><span class="pill-dot"></span>java / jsp / sql</span>
+                <span class="pill"><span class="pill-dot"></span>student life</span>
+            </div>
+        </div>
+    </aside>
+</div>
+</body>
 </html>

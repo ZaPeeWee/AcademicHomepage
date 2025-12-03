@@ -37,3 +37,4 @@ CREATE TABLE IF NOT EXISTS projects (
     FOREIGN KEY (user_id) REFERENCES users(id)
         ON DELETE CASCADE
 );
+

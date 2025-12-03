@@ -27,7 +27,7 @@ public class LoginServlet extends HttpServlet {
 
         try (Connection conn = DBConnection.getConnection()) {
 
-            String sql = "SELECT id, full_name, email, password, major " +
+            String sql = "SELECT id, full_name, email, password, major, avatar_path, resume_path " +
                          "FROM users WHERE email = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, email);
@@ -45,12 +45,15 @@ public class LoginServlet extends HttpServlet {
                     session.setAttribute("userEmail", rs.getString("email"));
                     session.setAttribute("userMajor", rs.getString("major"));
 
+                    // ⭐ NEW: Load avatar + resume into session
+                    session.setAttribute("avatarPath", rs.getString("avatar_path"));
+                    session.setAttribute("resumePath", rs.getString("resume_path"));
+
                     response.sendRedirect("dashboard.jsp");
                     return;
                 }
             }
 
-            // login failed
             response.sendRedirect("login.jsp?error=1");
 
         } catch (Exception e) {
