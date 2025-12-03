@@ -1,95 +1,128 @@
-# AcademicHomepage – Backend & Database Milestone
+** Academic Homepage — Student Portal Web App **
 
-## Overview
-This project is a personal Academic Homepage web application built using:
-- Java Servlets
-- JSP
-- MySQL
-- Apache Tomcat 11
-- NetBeans 22 / Maven
+A dark-academia themed Java web application built using JSP, Servlets, and MySQL.
 
-The backend supports user registration, login (with session tracking), a contact form,
-and viewing messages stored in the database.
+** Project Description **
 
-## Database Schema
+Academic Homepage is a fully functional student portal designed to demonstrate authentication, database operations, and dynamic content rendering using Jakarta Servlets, JSP, and MySQL.
+The interface features a polished dark academia theme and includes:
 
-Database name: `academic_homepage`
+** Core Features ** 
 
-Tables:
+* User Registration & Login (Session-based  authentication)
 
-1. `users`
-   - `id` INT AUTO_INCREMENT PRIMARY KEY
-   - `username` VARCHAR(50) UNIQUE NOT NULL
-   - `password` VARCHAR(255) NOT NULL
-   - `email` VARCHAR(100)
+* Editable Student Profile
 
-2. `projects`
-   - `id` INT AUTO_INCREMENT PRIMARY KEY
-   - `title` VARCHAR(100) NOT NULL
-   - `description` TEXT
-   - `link` VARCHAR(255)
+	* Upload profile pictures
 
-3. `messages`
-   - `id` INT AUTO_INCREMENT PRIMARY KEY
-   - `name` VARCHAR(100)
-   - `email` VARCHAR(100)
-   - `message` TEXT
-   - `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+	* Upload PDF resumes
 
-SQL script: `academic_homepage.sql`
+	* Update name, major, and bio
 
-## How to Run
+* Projects Section
 
-1. Create the database:
-   - Use MySQL Workbench or NetBeans SQL window
-   - Run the script in `academic_homepage.sql`
+	* Add new projects
 
-2. Configure database connection:
-   - In `DBConnection.java`, set:
-     - URL: `jdbc:mysql://localhost:3306/academic_homepage`
-     - USER: your MySQL username (e.g., `root`)
-     - PASS: your MySQL password
+	* Upload an image for each project
 
-3. Build the project:
-   - In NetBeans, right-click the project → **Clean and Build**
+	* Add a link to the project
 
-4. Run with Tomcat:
-   - Right-click the project → **Run**
-   - Tomcat will deploy at: `http://localhost:8080/AcademicHomepage/`
+	* Edit and delete existing projects
 
-## Servlet URLs
+* Messaging System
 
-- `POST /RegisterServlet`
-  - Handles user registration and inserts into `users` table.
+	* Students can send messages to each other
 
-- `POST /LoginServlet`
-  - Authenticates user against `users` table.
-  - On success, creates `HttpSession` with attribute `username`.
-  - Redirects to `dashboard.jsp`.
+	* Admin can see all messages
 
-- `POST /MessageServlet`
-  - Handles contact form submissions.
-  - Inserts into `messages` table.
+	* Users can see their inbox and sent messages
 
-## Frontend Flow
+* Dark Academia UI
 
-- `index.jsp` → links to `register.jsp`, `login.jsp`, `contact.jsp`.
-- `register.jsp` → `RegisterServlet` → `users` table.
-- `login.jsp` → `LoginServlet` → `dashboard.jsp` (session-based).
-- `contact.jsp` → `MessageServlet` → `messages` table.
-- `viewMessages.jsp` → reads from `messages` and displays all messages.
+	* Custom style.css for consistent aesthetic
 
-## CRUD Summary
+	* Responsive card layouts
 
-- **Create**: registration (`users`), contact messages (`messages`).
-- **Read**: dashboard project list, viewMessages displays messages.
-- **Update/Delete**: could be added later (not required for this milestone).
+	* Warm typography and themed colors
 
-## Bonus Features
+This project serves as a demonstration of:
 
-- Uses `PreparedStatement` for all SQL queries to avoid SQL injection.
-- Uses `HttpSession` in `LoginServlet` and `dashboard.jsp` to track logged-in user.
-- Deployed and tested on Apache Tomcat 11.
-- All database queries in servlets and JSP pages use `PreparedStatement` to help prevent SQL injection.
-- User login is implemented with `HttpSession` in `LoginServlet` and checked in `dashboard.jsp`.
-- A `LogoutServlet` (`/logout`) is provided to invalidate the session and securely log out users.
+* Web development with Servlets & JSP
+
+* Session handling
+
+* File upload via @MultipartConfig
+
+* MySQL CRUD operations
+
+* Full-stack UI + backend integration
+
+** How to Run the Project **
+Prerequisites
+
+You must have installed:
+
+* Java 17+
+
+* Apache Tomcat 10/11 (matching Jakarta packages)
+
+* NetBeans (recommended) or IntelliJ/Eclipse
+
+* MySQL Server
+
+* Maven (NetBeans handles this automatically)
+
+
+** Team Member Contributions **
+Vianey Medina Soto
+
+Sole developer — built 100% of the project
+
+* Designed and implemented the entire application
+
+* Created all UI pages (JSPs, HTML, CSS)
+
+* Built backend features using Servlets and JDBC
+
+* Designed MySQL schema
+
+* Implemented file uploads for avatars, resumes, and project images
+
+* Built full project CRUD system
+
+* Built full messaging system
+
+* Created the Dark Academia theme 
+
+* Integrated everything into a complete working web app
+
+* Managed GitHub version control
+
+
+
+** Tools and Libraries Used **
+Backend & Languages
+
+* Java 17
+
+* Jakarta Servlet API
+
+* JSP (JavaServer Pages)
+
+* JDBC & MySQL
+
+Frontend
+
+* HTML5
+
+* CSS3
+
+* Dark Academia theme
+
+Server & Build
+
+* Apache Tomcat 10/11
+
+* Maven
+
+* NetBeans IDE
